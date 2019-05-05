@@ -90,6 +90,7 @@ class User extends Component {
           currentUser: {},
           userAction: 'addUser'
         });
+        dis.props.addOrEditUser(body);
       }
     );
 
@@ -103,11 +104,26 @@ class User extends Component {
   }
 
   deleteUser(userToDelete) {
-    let userListUpdated = this.state.userList;
-    userListUpdated = userListUpdated.filter(user => user.employeeID !== userToDelete.employeeID);
-    this.setState({
-      userList: userListUpdated
-    });
+    var dis = this;
+    request.post(
+      {
+        url: 'http://localhost:3000/spi/users/deleteUser',
+        json: userToDelete
+      },
+      function (err, httpResponse, body) {
+        console.log(body);
+        dis.setState({
+          userList: body,
+          showLoadingModal: false,
+          addUserResponse: {
+            status: 'success'
+          },
+          currentUser: {},
+          userAction: 'deleteUser'
+        });
+        dis.props.addOrEditUser(body);
+      }
+    );
   }
 
 }

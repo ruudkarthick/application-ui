@@ -157,7 +157,7 @@ class App extends Component {
             <TabPane tabId="1">
               <Row>
                 <Col sm="12">
-                  <Project userList={this.state.userList} projectsList={this.state.projectsList} />
+                  <Project userList={this.state.userList} projectsList={this.state.projectsList} addProject={(projects)=>this.addProject(projects)}/>
                 </Col>
               </Row>
             </TabPane>
@@ -172,14 +172,14 @@ class App extends Component {
             <TabPane tabId="3">
               <Row>
                 <Col sm="12">
-                  <User userList={this.state.userList} />
+                  <User userList={this.state.userList} addOrEditUser={(userList)=>this.addOrEditUser(userList)}/>
                 </Col>
               </Row>
             </TabPane>
             <TabPane tabId="4">
               <Row>
                 <Col sm="12">
-                  <ViewTask taskList={this.state.taskList} activeTab={this.state.activeTab} editTask={(userAction, task) => this.editTask(userAction, task)}/>
+                  <ViewTask taskList={this.state.taskList} projectsList={this.state.projectsList} editTask={(userAction, task) => this.editTask(userAction, task)}/>
                 </Col>
               </Row>
             </TabPane>
@@ -189,25 +189,19 @@ class App extends Component {
     );
   }
 
-  addOrEditTask(userAction, task) {
-    let taskList = this.state.taskList;
-    if (userAction === 'addTask') {
-      taskList.push(task);
-    } else if (userAction === 'editTask') {
-      taskList.map(cTask => {
-        if (cTask.id === task.id) {
-          cTask.projectName = task.projectName;
-          cTask.taskName = task.taskName;
-          cTask.priority = task.priority;
-          cTask.isParentTask = task.isParentTask;
-          cTask.parentTask = task.parentTask;
-          cTask.startDate = task.startDate;
-          cTask.endDate = task.endDate;
-          cTask.user = task.user;
-        }
-        return cTask
-      });
-    }
+  addProject(projects){
+    this.setState({
+      projectsList: projects
+    });
+  }
+
+  addOrEditUser(userList){
+    this.setState({
+      userList: userList
+    });
+  }
+
+  addOrEditTask(userAction, taskList) {
     this.setState({
       taskList: taskList
     });

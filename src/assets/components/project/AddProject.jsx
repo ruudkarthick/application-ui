@@ -5,7 +5,7 @@ import {
     Modal, ModalHeader, ModalBody, ModalFooter,
     ListGroup, ListGroupItem, Alert
 } from 'reactstrap';
-import 'react-rangeslider/lib/index.css'
+import { format, addDays, differenceInCalendarDays } from 'date-fns';
 
 class AddProject extends Component {
 
@@ -15,6 +15,8 @@ class AddProject extends Component {
             'addProject': 'Add',
             'updateProject': 'Update'
         };
+        const currentDate = format(new Date(), 'YYYY-MM-DD');
+        const nextDate = format(addDays(new Date(), 1), 'YYYY-MM-DD');
         const projectDetails = props.currentProject || {};
         this.state = {
             id: projectDetails.id || '',
@@ -29,6 +31,8 @@ class AddProject extends Component {
             selectDate: false,
             datePickerDisabled: true,
             startDate: '',
+            currentDate: currentDate,
+            nextDate: nextDate,
             endDate: ''
         }
     }
@@ -70,6 +74,11 @@ class AddProject extends Component {
                             <Col sm={12}><Alert color="danger">All Fields are required!</Alert></Col>
                         </FormGroup>
                     }
+                    {this.state.endDateValidationError &&
+                        <FormGroup row>
+                            <Col sm={12}><Alert color="danger">End date cannot be earlier than start date</Alert></Col>
+                        </FormGroup>
+                    }
 
                     <FormGroup row>
                         <Label for="firstName" sm={2}>Project:</Label>
@@ -96,6 +105,7 @@ class AddProject extends Component {
                                 invalid={this.state.startDateInvalid}
                                 disabled={this.state.datePickerDisabled}
                                 value={this.state.startDate}
+                                min={this.state.currentDate}
                                 onFocus={e => this.focus("startDate", e)}
                                 onChange={e => this.handleChange("startDate", e)}
                             />
@@ -170,22 +180,34 @@ class AddProject extends Component {
         this.setState({
             [prop]: false
         })
+        if(name == 'endDate'){
+            this.setState({
+                endDateValidationError: false
+            });
+        }
     }
 
     selectDate() {
-        const prevState = this.state.selectDate
+        const prevState = this.state.selectDate;
+        const currentDate = this.state.currentDate;
+        const nextDate = this.state.nextDate;
         this.setState(({
             selectDate: !prevState,
             datePickerDisabled: prevState,
             startDateInvalid: false,
             endDateInvalid: false
         }));
-       
+
         if (prevState) {
             this.setState({
                 startDate: '',
                 endDate: ''
             });
+        } else {
+            this.setState(({
+                startDate: currentDate,
+                endDate: nextDate
+            }));
         }
     }
 
@@ -233,7 +255,8 @@ class AddProject extends Component {
             priorityError: false,
             managerNameError: false,
             startDateError: false,
-            endDateError: false
+            endDateError: false,
+            endDateValidationError: false
         })
     }
 
@@ -264,6 +287,13 @@ class AddProject extends Component {
                     startDateInvalid: startDate ? false : true,
                     endDateInvalid: endDate ? false : true
                 })
+            }else if (startDate && endDate) {
+                if (differenceInCalendarDays(endDate, startDate) < 1) {
+                    formError = true;
+                    this.setState({
+                        endDateValidationError: true
+                    });
+                }
             }
         }
         return formError;

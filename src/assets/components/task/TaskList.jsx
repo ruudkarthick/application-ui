@@ -9,6 +9,7 @@ class TaskList extends Component {
         super(props);
         this.state = {
             taskList: props.taskList || [],
+            projectsList: props.projectsList || [],
             sortBy: '',
             searchText: '',
             projectModal: false,
@@ -19,6 +20,7 @@ class TaskList extends Component {
     componentWillReceiveProps(nextProps) {
         this.setState({
             taskList: nextProps.taskList || [],
+            projectsList: nextProps.projectsList,
             sortBy: ''
         });
     }
@@ -32,11 +34,12 @@ class TaskList extends Component {
         }
         if (projectName) {
             taskList = taskList.filter(task => {
-                if (task.projectName.indexOf(projectName) > -1) {
+                if (task.projectName && task.projectName.indexOf(projectName) > -1) {
                     return task;
                 }
             });
         }
+
 
         return (
             <div className="list-section">
@@ -52,11 +55,11 @@ class TaskList extends Component {
                                 <ModalHeader toggle={() => this.toggleProjectModal()}>Select Project</ModalHeader>
                                 <ModalBody>
                                     <ListGroup>
-                                        {this.state.taskList && this.state.taskList.length > 0 ?
-                                            this.state.taskList.map(
-                                                task => {
+                                        {this.state.projectsList && this.state.projectsList.length > 0 ?
+                                            this.state.projectsList.map(
+                                                project => {
                                                     return (
-                                                        <ListGroupItem tag="button" action onClick={() => this.assignProject(task.projectName)}>{task.projectName}</ListGroupItem>
+                                                        <ListGroupItem tag="button" action onClick={() => this.assignProject(project.projectName)}>{project.projectName}</ListGroupItem>
                                                     );
                                                 })
                                             : <ListGroupItem disabled>Please add users to add/update projects</ListGroupItem>}

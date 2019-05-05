@@ -2,17 +2,18 @@ import React, { Component } from 'react';
 import './Task.css';
 import {
     Button, Form, FormGroup, Label, Input, Col,
-    Modal, ModalHeader, ModalBody, ModalFooter,
+    Modal, ModalHeader, ModalBody, ModalFooter, Alert,
     ListGroup, ListGroupItem
 } from 'reactstrap';
-import Slider from 'react-rangeslider'
-import 'react-rangeslider/lib/index.css'
 import request from 'request';
+import { format, addDays, differenceInCalendarDays } from 'date-fns';
 
 class AddTask extends Component {
 
     constructor(props) {
         super(props);
+        const currentDate = format(new Date(), 'YYYY-MM-DD');
+        const nextDate = format(addDays(new Date(), 1), 'YYYY-MM-DD');
         const labels = {
             'addTask': 'Add Task',
             'editTask': 'Edit Task'
@@ -29,8 +30,11 @@ class AddTask extends Component {
             projectModal: false,
             userModal: false,
             taskModal: false,
+            formError: false,
             parentTask: {},
             labels: labels,
+            currentDate: currentDate,
+            nextDate: nextDate,
             user: {}
         }
     }
@@ -44,13 +48,14 @@ class AddTask extends Component {
             additionalProps = {
                 id: currentTask.id || '',
                 projectName: currentTask.projectName || '',
-                taskName: currentTask.task || '',
+                projectId: currentTask.projectId,
+                taskName: currentTask.task,
                 priority: currentTask.priority,
                 isParentTask: currentTask.isParentTask,
                 parentTask: currentTask.parentTask,
                 startDate: currentTask.startDate || '',
                 endDate: currentTask.endDate || '',
-                user: {'firstName':currentTask.userName}
+                user: { 'firstName': currentTask.userName }
             }
         }
         this.setState({
@@ -68,10 +73,20 @@ class AddTask extends Component {
         return (
             <div className="form-section">
                 <Form>
+                    {this.state.formError &&
+                        <FormGroup row>
+                            <Col sm={12}><Alert color="danger">All Fields are required!</Alert></Col>
+                        </FormGroup>
+                    }
+                    {this.state.endDateValidationError &&
+                        <FormGroup row>
+                            <Col sm={12}><Alert color="danger">End date cannot be earlier or same as start date</Alert></Col>
+                        </FormGroup>
+                    }
                     <FormGroup row>
                         <Label for="projectName" sm={3}>Project:</Label>
                         <Col sm={6}>
-                            <Input type="text" value={this.state.projectName} disabled />
+                            <Input type="text" value={this.state.projectName} disabled invalid={this.state.projectNameInvalid} />
                         </Col>
                         <Col sm={3}>
                             <Button onClick={e => this.toggleProjectModal(e)}>Search</Button>
@@ -98,7 +113,8 @@ class AddTask extends Component {
                     <FormGroup row>
                         <Label for="startEnd" sm={3}>Task: </Label>
                         <Col sm={9}>
-                            <Input type="text" value={this.state.taskName} onChange={e => this.handleChange("taskName", e)} />
+                            <Input type="text" value={this.state.taskName} onFocus={e => this.focus("taskName", e)}
+                                invalid={this.state.taskNameInvalid} onChange={e => this.handleChange("taskName", e)} />
                         </Col>
                     </FormGroup>
                     <FormGroup row>
@@ -114,12 +130,11 @@ class AddTask extends Component {
                     <FormGroup row>
                         <Label for="priority" sm={2}>Priority:</Label>
                         <Col sm={10}>
-                        <Slider
-                                value={this.state.priority}
-                                onChange={(...args) => this.onPriorityChange(args)}
-                                min={0}
-                                max={30}
-                            />
+
+                            <Input type="range" min="1" max="30" invalid={this.state.priorityInvalid}
+                                value={this.state.priority} class="slider"
+                                onFocus={e => this.focus("priority", e)}
+                                onChange={(e) => this.onPriorityChange(e)} />
                         </Col>
                     </FormGroup>
                     <FormGroup row>
@@ -136,10 +151,10 @@ class AddTask extends Component {
                                         {this.state.parentTaskList && this.state.parentTaskList.length > 0 ?
                                             this.state.parentTaskList.map(
                                                 task => {
-                                                        return (
-                                                            <ListGroupItem tag="button" action onClick={() => this.assignTask(task)}>{task.parentTask}</ListGroupItem>
-                                                        );
-                                                    
+                                                    return (
+                                                        <ListGroupItem tag="button" action onClick={() => this.assignTask(task)}>{task.parentTask}</ListGroupItem>
+                                                    );
+
                                                 })
                                             : <ListGroupItem disabled>Please add Tasks</ListGroupItem>}
                                     </ListGroup>
@@ -158,8 +173,10 @@ class AddTask extends Component {
                                 name="startDate"
                                 id="startDate"
                                 placeholder="Start Date"
-                                disabled={!this.state.isParentTask}
+                                disabled={this.state.isParentTask}
+                                invalid={this.state.startDateInvalid}
                                 value={this.state.startDate}
+                                onFocus={e => this.focus("startDate", e)}
                                 onChange={e => this.handleChange("startDate", e)}
                             />
                         </Col>
@@ -170,8 +187,10 @@ class AddTask extends Component {
                                 name="endData"
                                 id="endData"
                                 placeholder="End Date"
-                                disabled={!this.state.isParentTask}
+                                disabled={this.state.isParentTask}
+                                invalid={this.state.endDateInvalid}
                                 value={this.state.endDate}
+                                onFocus={e => this.focus("endDate", e)}
                                 onChange={e => this.handleChange("endDate", e)}
                             />
                         </Col>
@@ -179,7 +198,7 @@ class AddTask extends Component {
                     <FormGroup row>
                         <Label for="user" sm={3}>User:</Label>
                         <Col sm={6}>
-                            <Input type="text" value={this.state.user.firstName} disabled />
+                            <Input type="text" value={this.state.user.firstName} invalid={this.state.userIdInvalid} disabled />
                         </Col>
                         <Col sm={3}>
                             <Button onClick={e => this.toggleUserModal(e)}>Search</Button>
@@ -214,17 +233,38 @@ class AddTask extends Component {
         );
     }
 
+    focus(name) {
+        const prop = name + "Invalid"
+        this.setState({
+            [prop]: false
+        });
+        if(name == 'endDate'){
+            this.setState({
+                endDateValidationError: false
+            });
+        }
+    }
+
     parentTaskSelector() {
         const prevState = this.state.isParentTask;
         this.setState(({
             isParentTask: !prevState
         }));
+        const currentDate = this.state.currentDate;
+        const nextDate = this.state.nextDate;
+        if (prevState) {
+            this.setState(({
+                startDate: currentDate,
+                endDate: nextDate
+            }));
+        }
     }
 
     assignUser(user) {
         this.setState(prevState => ({
             user: user,
-            userModal: !prevState.userModal
+            userModal: !prevState.userModal,
+            userIdInvalid: false
         }));
     }
 
@@ -232,7 +272,8 @@ class AddTask extends Component {
         this.setState(prevState => ({
             projectId: project.id,
             projectName: project.projectName,
-            projectModal: !prevState.projectModal
+            projectModal: !prevState.projectModal,
+            projectNameInvalid: false
         }));
     }
 
@@ -241,18 +282,11 @@ class AddTask extends Component {
             parentTask: task,
             parentTaskId: task.id,
             parentTaskName: task.parentTask,
-            taskModal: !prevState.taskModal
+            taskModal: !prevState.taskModal,
+            taskNameInvalid: false
         }));
     }
 
-    selectDate() {
-        const prevState = this.state.selectDate
-        this.setState(({
-            selectDate: !prevState,
-            datePickerDisabled: prevState
-        }));
-
-    }
 
     toggleTaskModal() {
         this.setState(prevState => ({
@@ -272,9 +306,9 @@ class AddTask extends Component {
         }));
     }
 
-    onPriorityChange(args) {
+    onPriorityChange(e) {
         this.setState({
-            priority: args[0]
+            priority: e.target.value
         });
     }
 
@@ -287,13 +321,30 @@ class AddTask extends Component {
             parentTask: {},
             startDate: '',
             endDate: '',
-            user: {}
+            formError: false,
+            user: {
+                firstName: ''
+            },
+            parentTaskName: '',
+            projectIdInvalid: false,
+            taskNameInvalid: false,
+            priorityInvalid: false,
+            formError: false,
+            endDateValidationError: false,
+            startDateInvalid: false,
+            endDateInvalid: false,
+            userIdInvalid: false
         })
     }
 
     addOrEditTask(e, userAction) {
         console.log(e);
         console.log(userAction)
+
+        if (this.validateForm()) {
+            return;
+        }
+
         const task = {
             projectId: this.state.projectId,
             task: this.state.taskName,
@@ -305,36 +356,76 @@ class AddTask extends Component {
             userId: this.state.user.id
         };
         if (userAction === 'addTask') {
-            task.id = 'taskid-' + Math.random().toString(36).substr(2, 16);
+            task.id = null; // Will get added in server side
             task.status = "New";
         }
-        if (task.isParentTask){
-            task.parentId = 'parenttaskid-' + Math.random().toString(36).substr(2, 16);
+        if (task.isParentTask) {
+            task.parentId = null; // Will get added in server side
         }
 
         var dis = this;
         request.post(
-          {
-            url: 'http://localhost:3000/spi/task/addUpdate',
-            json: task
-          },
-          function (err, httpResponse, body) {
-            console.log(body);
-            dis.setState({
-              taskList: body,
-              addUserResponse: {
-                status: 'success'
-              },
-              currentUser: {},
-              userAction: 'addTask'
-            });
-          }
+            {
+                url: 'http://localhost:3000/spi/task/addUpdate',
+                json: task
+            },
+            function (err, httpResponse, body) {
+                console.log(body);
+                dis.setState({
+                    taskList: body,
+                    addUserResponse: {
+                        status: 'success'
+                    },
+                    currentUser: {},
+                    userAction: 'addTask'
+                });
+                dis.props.addOrEditTask(userAction, body);
+            }
         );
 
         // TODO - validation
         console.log(task);
-        this.props.addOrEditTask(userAction, task);
         this.reset();
+    }
+
+    validateForm() {
+        let formError = false;
+        const projectId = this.state.projectId;
+        const taskName = this.state.taskName;
+        const priority = this.state.priority;
+        const isParentTask = this.state.isParentTask;
+        const parentTaskId = this.state.parentTaskId;
+        const startDate = this.state.startDate;
+        const endDate = this.state.endDate;
+        const userId = this.state.user.id
+        if (!projectId || !taskName || !priority) {
+            formError = true;
+            this.setState({
+                formError: formError,
+                projectIdInvalid: projectId ? false : true,
+                taskNameInvalid: taskName ? false : true,
+                priorityInvalid: priority ? false : true
+            });
+        }
+        if (!isParentTask) {
+            if (!startDate || !endDate || !userId) {
+                formError = true;
+                this.setState({
+                    formError: formError,
+                    startDateInvalid: startDate ? false : true,
+                    endDateInvalid: endDate ? false : true,
+                    userIdInvalid: userId ? false : true
+                });
+            } else if (startDate && endDate) {
+                if (differenceInCalendarDays(endDate, startDate) < 1) {
+                    formError = true;
+                    this.setState({
+                        endDateValidationError: true
+                    });
+                }
+            }
+        }
+        return formError;
     }
 
     handleChange(name, e) {

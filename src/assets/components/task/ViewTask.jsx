@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import TaskList from './TaskList';
 import './Task.css';
-import request from 'request';
 
 class ViewTask extends Component {
 
@@ -9,7 +8,7 @@ class ViewTask extends Component {
     super(props);
     this.state = {
       taskList: props.taskList || [],
-      activeTab: props.activeTab 
+      projectsList: props.projectsList || []
     }
   }
 
@@ -19,7 +18,7 @@ class ViewTask extends Component {
 
     this.setState({
         taskList: props.taskList,
-        activeTab: props.activeTab 
+        projectsList: props.projectsList
     });
 }
 
@@ -27,7 +26,7 @@ class ViewTask extends Component {
     return (
       <div className="user-section">
         <div className="divider"></div>
-        <TaskList taskList={this.state.taskList} editTask={(userAction, task) => this.editTask(userAction, task)}/>
+        <TaskList taskList={this.state.taskList} projectsList={this.state.projectsList} editTask={(userAction, task) => this.editTask(userAction, task)}/>
       </div>
     );
   }

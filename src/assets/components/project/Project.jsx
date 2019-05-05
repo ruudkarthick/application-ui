@@ -98,6 +98,7 @@ class Project extends Component {
                     userAction: '',
                     showLoadingModal: false
                 });
+                dis.props.addProject(body);
             }
         );
 
