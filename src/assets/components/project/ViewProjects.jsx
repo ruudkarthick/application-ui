@@ -86,7 +86,7 @@ class ViewProjects extends Component {
                 <Row>
                     <Col xs="3"><ListGroup>
                         <ListGroupItem><strong>Project:</strong> {project.projectName}</ListGroupItem>
-                        <ListGroupItem><strong>No of Tasks: </strong>{(project.tasks && project.tasks.length) || 0}</ListGroupItem>
+                        <ListGroupItem><strong>No of Tasks: </strong>{project.tasksCount || 0}</ListGroupItem>
                         <ListGroupItem><strong>Completed: </strong>{project.status || 'Not Completed'}</ListGroupItem>
                     </ListGroup>
                     </Col>

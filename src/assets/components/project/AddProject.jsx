@@ -314,7 +314,7 @@ class AddProject extends Component {
             endDate: this.state.endDate
         }
         if (userAction === 'addProject') {
-            projectDetails.id = 'id-' + Math.random().toString(36).substr(2, 16);
+            projectDetails.id = null;
             projectDetails.status = "New";
         }
         if (userAction === 'updateProject') {

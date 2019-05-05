@@ -12,7 +12,6 @@
     "react-scripts": "2.1.8",
     "react-rangeslider": "2.2.0",
     "reactstrap": "^8.0.0",
-    "bluebird": "3.x",
     "lodash": "^4.17.10",
     "request": "2.88.0",
     "date-fns": "1.30.1"
