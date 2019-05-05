@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './Task.css';
 import {
     Button, Form, FormGroup, Label, Input, Col,
-    Modal, ModalHeader, ModalBody, ModalFooter, Alert,
+    Modal, ModalHeader, ModalBody, Row, ModalFooter,Spinner, Alert,
     ListGroup, ListGroupItem
 } from 'reactstrap';
 import request from 'request';
@@ -35,6 +35,7 @@ class AddTask extends Component {
             labels: labels,
             currentDate: currentDate,
             nextDate: nextDate,
+            showLoadingModal: false,
             user: {}
         }
     }
@@ -175,6 +176,7 @@ class AddTask extends Component {
                                 placeholder="Start Date"
                                 disabled={this.state.isParentTask}
                                 invalid={this.state.startDateInvalid}
+                                min={this.state.currentDate}
                                 value={this.state.startDate}
                                 onFocus={e => this.focus("startDate", e)}
                                 onChange={e => this.handleChange("startDate", e)}
@@ -189,6 +191,7 @@ class AddTask extends Component {
                                 placeholder="End Date"
                                 disabled={this.state.isParentTask}
                                 invalid={this.state.endDateInvalid}
+                                min={this.state.nextDate}
                                 value={this.state.endDate}
                                 onFocus={e => this.focus("endDate", e)}
                                 onChange={e => this.handleChange("endDate", e)}
@@ -229,6 +232,16 @@ class AddTask extends Component {
                         </Col>
                     </FormGroup>
                 </Form>
+                <Modal isOpen={this.state.showLoadingModal}>
+                    <ModalBody>
+                        <Row>
+                            <Spinner color="dark" />
+                        </Row>
+                        <Row>
+                            <p>Saving user action. Please wait...</p>
+                        </Row>
+                    </ModalBody>
+                </Modal>
             </div>
         );
     }
@@ -238,7 +251,7 @@ class AddTask extends Component {
         this.setState({
             [prop]: false
         });
-        if(name == 'endDate'){
+        if (name == 'endDate') {
             this.setState({
                 endDateValidationError: false
             });
@@ -364,6 +377,9 @@ class AddTask extends Component {
         }
 
         var dis = this;
+        this.setState({
+            showLoadingModal: true
+        });
         request.post(
             {
                 url: 'http://localhost:3000/spi/task/addUpdate',
@@ -377,7 +393,8 @@ class AddTask extends Component {
                         status: 'success'
                     },
                     currentUser: {},
-                    userAction: 'addTask'
+                    userAction: 'addTask',
+                    showLoadingModal: false
                 });
                 dis.props.addOrEditTask(userAction, body);
             }
