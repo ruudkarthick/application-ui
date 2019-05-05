@@ -13,7 +13,7 @@ class AddUser extends Component {
             'editUser': 'Update User'
         };
         this.state = {
-            id: currentUser.id || '',
+            id: currentUser.id || null,
             firstName: currentUser.firstName || '',
             lastName: currentUser.lastName || '',
             employeeID: currentUser.employeeID || '',
@@ -36,7 +36,7 @@ class AddUser extends Component {
         }
         let currentUser = nextProps.currentUser || {}
         this.setState({
-            id: currentUser.id || '',
+            id: currentUser.id || null,
             firstName: currentUser.firstName || '',
             lastName: currentUser.lastName || '',
             employeeID: currentUser.employeeID || '',
@@ -126,7 +126,7 @@ class AddUser extends Component {
     reset(e) {
         this.setState({
             formError: false,
-            id: '',
+            id: null,
             firstName: '',
             lastName: '',
             employeeID: '',

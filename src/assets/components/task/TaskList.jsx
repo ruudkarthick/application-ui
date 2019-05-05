@@ -126,7 +126,7 @@ class TaskList extends Component {
                 <Row>
 
                     <Col xs="2"><ListGroup>
-                        <ListGroupItem disabled tag="a" href="#">{task.taskName}</ListGroupItem>
+                        <ListGroupItem disabled tag="a" href="#">{task.task}</ListGroupItem>
                     </ListGroup>
                     </Col>
                     <Col xs="2"><ListGroup>
@@ -142,16 +142,16 @@ class TaskList extends Component {
                     <Col xs="2">
                         <span>{task.endDate}</span>
                     </Col>
-                    <Col xs="1"> <Button onClick={e => this.editTask(task)}>Edit</Button></Col>
-                    <Col xs="2"> <Button onClick={e => this.editTask(task)}>End Task</Button></Col>
+                    <Col xs="1"> <Button onClick={e => this.editTask("editTask", task)}>Edit</Button></Col>
+                    <Col xs="2"> <Button onClick={e => this.editTask("endTask", task)}>End Task</Button></Col>
                 </Row>
             </div>
         );
         return section;
     }
 
-    editTask(task) {
-        this.props.editTask(task);
+    editTask(userAction, task) {
+        this.props.editTask(userAction, task);
     }
 
     toggleProjectModal() {

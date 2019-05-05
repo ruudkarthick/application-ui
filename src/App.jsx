@@ -50,6 +50,13 @@ class App extends Component {
     };
   }
 
+  componentWillReceiveProps(props) {
+    console.log(props)
+    this.setState({
+        activeTab: props.activeTab 
+    });
+}
+
   componentDidMount() {
     var dis = this;
     request
@@ -157,7 +164,7 @@ class App extends Component {
             <TabPane tabId="2">
               <Row>
                 <Col sm="12">
-                  <AddTask userList={this.state.userList} projectsList={this.state.projectsList} taskList={this.state.taskList} parentTaskList={this.state.parentTaskList}
+                  <AddTask userList={this.state.userList} projectsList={this.state.projectsList} currentTask={this.state.currentTask} parentTaskList={this.state.parentTaskList}
                     addOrEditTask={(userAction, task) => this.addOrEditTask(userAction, task)} />
                 </Col>
               </Row>
@@ -172,7 +179,7 @@ class App extends Component {
             <TabPane tabId="4">
               <Row>
                 <Col sm="12">
-                  <ViewTask taskList={this.state.taskList} />
+                  <ViewTask taskList={this.state.taskList} activeTab={this.state.activeTab} editTask={(userAction, task) => this.editTask(userAction, task)}/>
                 </Col>
               </Row>
             </TabPane>
@@ -204,6 +211,33 @@ class App extends Component {
     this.setState({
       taskList: taskList
     });
+  }
+
+  editTask(userAction, task) {
+    if(userAction === 'editTask'){
+      this.setState({
+        currentTask: task,
+        activeTab: '2'
+      });
+    } else {
+      var dis = this;
+      request.post(
+        {
+          url: 'http://localhost:3000/spi/task/endTask',
+          json: task
+        },
+        function (err, httpResponse, body) {
+          console.log(body);
+          dis.setState({
+            taskList: body,
+            addUserResponse: {
+              status: 'success'
+            }
+          });
+        }
+      );
+    }
+
   }
 
 }

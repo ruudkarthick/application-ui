@@ -44,13 +44,13 @@ class AddTask extends Component {
             additionalProps = {
                 id: currentTask.id || '',
                 projectName: currentTask.projectName || '',
-                taskName: currentTask.taskName || '',
+                taskName: currentTask.task || '',
                 priority: currentTask.priority,
                 isParentTask: currentTask.isParentTask,
                 parentTask: currentTask.parentTask,
                 startDate: currentTask.startDate || '',
                 endDate: currentTask.endDate || '',
-                user: currentTask.user
+                user: {'firstName':currentTask.userName}
             }
         }
         this.setState({
@@ -296,7 +296,7 @@ class AddTask extends Component {
         console.log(userAction)
         const task = {
             projectId: this.state.projectId,
-            taskName: this.state.taskName,
+            task: this.state.taskName,
             priority: this.state.priority,
             isParentTask: this.state.isParentTask,
             parentId: this.state.parentTaskId,
