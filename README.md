@@ -1,5 +1,8 @@
-Project Manager App
-
+Project Manager UI App
+##############
 UI - bootstrapped with [Create React App]
+#######
 	- Uses "http-proxy-middleware" for API integration
-Services - Spring Boot for data services
+#######
+	- Uses reactstrap for UI components
+	
