@@ -3,6 +3,7 @@
 }
 html,body{
   font-family: 'Open Sans', sans-serif !important;
+  background:#e6e6e6 !important
 }
 
 .App {
@@ -32,6 +33,7 @@ html,body{
 .user-section {
   padding: 10px;
   border: 1px solid #ccc;
+  background-color: #fff;
 }
 
 
@@ -45,6 +47,7 @@ input {
   margin: 10px;
   padding: 15px;
   box-shadow: 2px 2px 2px 2px #ccc;
+  background-color:#fff;
 }
 
 .form-element {
@@ -111,6 +114,7 @@ a, button, code, div, img, input, label, li, p, pre, select, span, svg, table, t
   border-right:0;
   border-left:0;
   border-bottom:2px solid #233f7a !important;
+  font-weight: bold;
 }
 .nav-tabs{
   width: 65vh;
@@ -120,7 +124,7 @@ a, button, code, div, img, input, label, li, p, pre, select, span, svg, table, t
   border-bottom:2px solid #233f7a !important;
 }
 .btn-secondary{
-  background-color: #32c5d2 !important;
+  background-color: #2d4883 !important;
   color: #FFF;
   border:0 !important;
 }
@@ -129,8 +133,8 @@ a, button, code, div, img, input, label, li, p, pre, select, span, svg, table, t
   border-color: #26a1ab !important;
 }
 button.secondary{
-  background-color: #e1e5ec !important;
-  color:#666;
+  background-color: #979797 !important;
+  color:#000;
   border-color:#e1e5ec !important;
 }
 
@@ -141,12 +145,15 @@ button.secondary:focus,button.secondary:hover{
 }
 .projects-list-section{
   margin: 15px;
+  padding: 10px;
+  background-color: #fff;
+  border: 1px solid #ccc;
 }
 .sort-filter-section{
   margin: 15px;
 }
 .list-item:nth-child(odd){
-background-color:#ededed;
+background-color:#e6ebf7;
 margin:5px;
 padding:10px;
 }
@@ -158,13 +165,18 @@ background-color:#FFF;
   .list-group-item{
     padding:0 !important;
     border:0 !important;
+    background-color:transparent;
   }
   ul.list-group{
     display: block;
+    background-color: transparent;
   }
   ul.list-group > .list-group-item{
     float: left;
     margin: 3px;
+  }
+  .list-group-item.disabled, .list-group-item:disabled{
+    background-color:transparent;
   }
   .col-3{
     max-width: 22%;
@@ -209,8 +221,7 @@ input[type=range]:focus::-webkit-slider-runnable-track {
 input[type=range]::-moz-range-track {
   width: 100%;
   height: 8.4px;
-  cursor: pointer;
-  animate: 0.2s;
+  cursor: pointer; 
   box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
   background: #3071a9;
   border-radius: 1.3px;
@@ -267,4 +278,14 @@ input[type=range]:focus::-ms-fill-upper {
 }
 .has-error{
  border-color:#e73d4a !important;
+}
+nav{
+  display: block;   
+}
+.bg-light{
+  background-color:#0033a0 !important;
+}
+.navbar-light .navbar-brand{
+  color:#fff;
+  margin: 0 auto;
 }

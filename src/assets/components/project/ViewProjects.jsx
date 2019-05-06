@@ -98,7 +98,7 @@ class ViewProjects extends Component {
                     <Col xs="3"> <ListGroup><ListGroupItem> <Badge color="primary">Priority: {project.priority}</Badge></ListGroupItem>
                     </ListGroup></Col>
                     <Col xs="3"> <ListGroup><ListGroupItem> <Button onClick={e => this.updateProject(project)}>Update</Button></ListGroupItem>
-                        <ListGroupItem> <Button onClick={e => this.suspendProject(project)}>Suspend</Button></ListGroupItem>
+                        <ListGroupItem> <Button className="secondary" onClick={e => this.suspendProject(project)}>Suspend</Button></ListGroupItem>
                     </ListGroup></Col>
                 </Row>
             </div>

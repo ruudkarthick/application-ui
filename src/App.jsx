@@ -3,12 +3,13 @@ import React, {
 } from 'react';
 import logo from './assets/images/cognizant_logo.svg';
 
-import './App.css';
+
 import User from './assets/components/user/User';
 import Project from './assets/components/project/Project';
 import ViewTask from './assets/components/task/ViewTask';
 import AddTask from './assets/components/task/AddTask';
 import { Navbar, NavbarBrand, TabContent, TabPane, Nav, NavItem, NavLink, Row, Col } from 'reactstrap';
+import './App.css';
 import classnames from 'classnames';
 import request from 'request';
 

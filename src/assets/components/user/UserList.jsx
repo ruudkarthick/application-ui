@@ -86,7 +86,7 @@ class UserList extends Component {
                     </ListGroup>
                     </Col>
                     <Col xs="6"> <ListGroup><ListGroupItem> <Button onClick={e => this.editUser(user)}>Edit</Button></ListGroupItem>
-                        <ListGroupItem> <Button onClick={e => this.deleteUser(user)}>Delete</Button></ListGroupItem>
+                        <ListGroupItem> <Button className="secondary" onClick={e => this.deleteUser(user)}>Delete</Button></ListGroupItem>
                     </ListGroup></Col>
                 </Row>
             </div>

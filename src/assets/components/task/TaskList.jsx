@@ -146,7 +146,7 @@ class TaskList extends Component {
                         <span>{task.endDate}</span>
                     </Col>
                     <Col xs="1"> <Button onClick={e => this.editTask("editTask", task)}>Edit</Button></Col>
-                    <Col xs="2"> <Button onClick={e => this.editTask("endTask", task)}>End Task</Button></Col>
+                    <Col xs="2"> <Button className="secondary" onClick={e => this.editTask("endTask", task)}>End Task</Button></Col>
                 </Row>
             </div>
         );
